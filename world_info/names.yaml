@@ -1,0 +1,316 @@
+nationalities:
+  Spain:
+    castilian:
+      first_names:
+        - Rafael
+        - Óscar
+        - Raúl
+        - Juan
+        - Sergio
+        - Andrés
+        - Carlos
+        - Emiliano
+        - Pelayo
+      last_names:
+        - Alvarado
+        - Navarro
+        - Jiménez
+        - Orellana
+        - García
+        - Costa
+        - Horta
+        - Zamora
+        - Valero
+    catalan:
+      first_names:
+        - Gerard
+        - Jordi
+        - Antoni
+        - Jan
+        - Sergi
+      last_names:
+        - Brunell
+        - Andreu
+        - Martí
+        - Puig
+        - Vidal
+  Italy:
+    italian:
+      first_names:
+        - Gio
+        - Antonio
+        - Mario
+        - Marco
+        - Pietro
+        - Alessandro
+        - Giorgio
+        - Sergio
+      last_names:
+        - Rossi
+        - Esposito
+        - Bianchi
+        - Giordano
+        - Costa
+        - Greco
+        - Leone
+        - Vitale
+  Senegal:
+    senegalese:
+      first_names:
+        - Mamadou
+        - Ibrahima
+        - Cheikh
+        - Abdoulaye
+        - Amadou
+        - Ousmane
+        - Modou
+        - Abdou
+      last_names:
+        - Ndiaye
+        - Diop
+        - Thiam
+        - Diallo
+        - Toure
+        - Diouf
+        - Gueye
+        - Cisse
+  Germany:
+    german:
+      first_names:
+        - Jens
+        - Dieter
+        - Bernd
+        - Mario
+        - Tim
+        - Steffen
+        - Uwe
+      last_names:
+        - Ziegler
+        - Mahler
+        - Zimmer
+        - Herz
+        - Neustadt
+        - Fischer
+        - Weissmüller
+        - Abbenhaus
+        - Adelsbach
+        - Hörst
+    german_turkish:
+      first_names:
+        - Mesut
+        - Ilkay
+        - Savaş
+        - Yaşar
+        - Yurdagül
+      last_names:
+        - Akdoğan
+        - Erentürk
+        - Görmüş
+        - Osmanoğlu
+        - Hacıoğlu
+  Nigeria:
+    nigerian_muslim:
+      first_names:
+        - Abdoul
+        - Mahmuda
+        - Mahrez
+        - Basid
+        - Azizu
+      last_names:
+        - Abubakar
+        - Abdrahim
+        - Mahamadou
+        - Habibou
+        - Hafsa
+  Denmark:
+    danish:
+      first_names:
+        - Kasper
+        - Peter
+        - Martin
+        - Aage
+        - Asbjørn
+        - Karl
+        - Sten
+        - Stig
+        - Evald
+        - Felix
+        - Andreas
+        - Arne
+      last_names:
+        - Jensen
+        - Nielsen
+        - Hansen
+        - Pedersen
+        - Andersen
+        - Christensen
+        - Larsen
+        - Sørensen
+        - Kjær
+        - Søndergaard
+  England:
+    inherit:
+      - Nigeria:nigerian_muslim
+      - Senegal:senegalese
+    english:
+      first_names:
+        - Jamie
+        - Jesse
+        - Harry
+        - Ethan
+        - Ollie
+      last_names:
+        - Walker
+        - Miller
+        - Murray
+        - Cuthbert
+        - Perry
+        - Adams
+  Serbia:
+    serb:
+      first_names:
+        - Dejan
+        - Mihailo
+        - Nikša
+        - Andrija
+        - Gavrilo
+        - Dušan
+        - Ivan
+        - Miloš
+      last_names:
+        - Begović
+        - Abramović
+        - Milinković
+        - Miličić
+        - Radić
+        - Smajlović
+        - Vasiljević
+  Argentina:
+    argentine:
+      inherit_first_names:
+        - Spain:castilian
+      inherit_last_names:
+        - Italy:italian
+  Uruguay:
+    uruguayan:
+      inherit_first_names:
+        - Spain:castilian
+      inherit_last_names:
+        - Spain:castilian
+        - Spain:catalan
+        - Italy:italian
+  Poland:
+    polish:
+      first_names:
+        - Jerzy
+        - Arkadiusz
+        - Zbigniew
+        - Wojciech
+        - Kazimierz
+        - Lech
+        - Józef
+      last_names:
+        - Adamczyk
+        - Lewandowski
+        - Popiełuszko
+        - Wiśniewski
+        - Kubicki
+        - Duda
+  Egypt:
+    arab:
+      first_names:
+        - Mohammed
+        - Mahmoud
+        - Hassan
+        - Amir
+        - Karim
+        - Hussein
+      last_names:
+        - Salah
+        - Nasser
+        - Mubarak
+        - Hussein
+        - Abbas
+  Japan:
+    japanese:
+      first_names:
+        - Riku
+        - Ryūji
+        - Arihiro
+        - Hideki
+        - Genjirō
+        - Hayato
+        - Sukemasa
+        - Tokujirō
+      last_names:
+        - Suzuki
+        - Yamamoto
+        - Yoshida
+        - Saitō
+        - Satō
+        - Aoki
+        - Kondō
+        - Okamoto
+  Portugal:
+    portuguese:
+      first_names:
+        - Tiago
+        - Edson
+        - Vinicio
+        - Luiz
+        - João
+        - Eduardo
+        - Ricardo
+        - Belmiro
+      last_names:
+        - Coimbra
+        - Nunes
+        - Antunes
+        - Delgado
+        - Silva
+        - Castro
+        - Costa
+        - Inácio
+        - Coelho
+        - Barbosa
+        - Álvares
+  Brazil:
+    inherit:
+      - Portugal:portuguese
+  France:
+    inherit:
+      - Ivory_Coast:akan
+    french:
+      first_names:
+        - Laurent
+        - Philippe
+        - Jean
+        - Antoine
+        - Olivier
+        - Paul
+        - Marcel
+        - René
+      last_names:
+        - Lefebvre
+        - Deschamps
+        - Martin
+        - Lambert
+        - Dupuy
+        - Desaix
+        - Lasalle
+        - Bertrand
+        - Morel
+        - Dumas
+  Ivory_Coast:
+    akan:
+      inherit_first_names:
+        - France:french
+      last_names:
+        - Sangaré
+        - Ouattara
+        - Koné
+        - Aké
+        - Diarra
+        - Traoré
+        - Achi
+        - Kouamé
