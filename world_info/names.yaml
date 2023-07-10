@@ -34,6 +34,46 @@ nationalities:
         - Martí
         - Puig
         - Vidal
+  Czechia:
+    czech:
+      first_names:
+        - Jan
+        - Jaromir
+        - Vladimir
+        - Václav
+        - Marek
+        - Jozef
+        - Karol
+        - Jaroslav
+      last_names:
+        - Kubiš
+        - Hrubý
+        - Dvořák
+        - Navrátil
+        - Horák
+        - Miler
+        - Zajíček
+        - Lendl
+  South_Korea:
+    korean:
+      first_names:
+        - Ha-Joon
+        - Jee-Ho
+        - Min-Joon
+        - In-Soo
+        - Soo-Jin
+        - Gyeong
+        - Min
+        - Bong
+      last_names:
+        - Kim
+        - Park
+        - Lee
+        - Kweon
+        - Kang
+        - Mangjul
+        - Ahn
+        - Pyong
   Italy:
     italian:
       first_names:
@@ -74,7 +114,23 @@ nationalities:
         - Diouf
         - Gueye
         - Cisse
+  Turkey:
+    turkish:
+      first_names:
+        - Mesut
+        - Ilkay
+        - Savaş
+        - Yaşar
+        - Yurdagül
+      last_names:
+        - Akdoğan
+        - Erentürk
+        - Görmüş
+        - Osmanoğlu
+        - Hacıoğlu
   Germany:
+    inherit:
+      - Turkey:turkish
     german:
       first_names:
         - Jens
@@ -95,19 +151,6 @@ nationalities:
         - Abbenhaus
         - Adelsbach
         - Hörst
-    german_turkish:
-      first_names:
-        - Mesut
-        - Ilkay
-        - Savaş
-        - Yaşar
-        - Yurdagül
-      last_names:
-        - Akdoğan
-        - Erentürk
-        - Görmüş
-        - Osmanoğlu
-        - Hacıoğlu
   Nigeria:
     nigerian_muslim:
       first_names:
@@ -231,6 +274,58 @@ nationalities:
         - Mubarak
         - Hussein
         - Abbas
+  Morocco:
+    inherit:
+      - Egypt:arab
+    maghrebi:
+      first_names:
+        - Ayoub
+        - Archane
+        - Choaib
+        - Elhachemi
+        - Idriss
+        - Hamdane
+        - Zine
+        - Fairouz
+      last_names:
+        - Burhan
+        - Ahmad
+        - Ebeid
+        - Farouq
+        - Hadid
+        - Aït
+        - Benasser
+        - Meziane
+  Algeria:
+    inherit:
+      - Egypt:arab
+      - Morocco:maghrebi
+  Switzerland:
+    inherit:
+      - Italy:italian
+      - Germany:german
+      - France:french
+      - Serbia:serb
+  Russia:
+    russian:
+      first_names:
+        - Pavel
+        - Leonid
+        - Nikita
+        - Andrei
+        - Dimitri
+        - Artem
+        - Lev
+        - Vladimir
+      last_names:
+        - Orlov
+        - Molotov
+        - Kuznetsov
+        - Volkov
+        - Ovechkin
+        - Vershinin
+        - Zhukov
+        - Domin
   Japan:
     japanese:
       first_names:
