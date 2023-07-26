@@ -46,6 +46,7 @@ for nationality in list(names['nationalities'].keys()):
         del names['nationalities'][nationality]
             
 k_value = 32
+use_8bit_color = True
 
 color = { 'black' : 232,
     'offwhite' : 255,
@@ -57,8 +58,10 @@ color = { 'black' : 232,
 
 phases_per_match = 24
 default_goalkeepers_per_club = 2
+proportion_nationals_per_club = 0.4
 high_quarterly_revenue = 500e6
 base_matchday_revenue = 200000
+base_additional_sales_multiplier = 5 # multiplied by elo for all daily non-ticket revenue
 matches_between_transfer_window = 10
 starting_player_count_on_roster = 25
 player_priority_factor = 50 # the discrepancy in team stat and player stat that causes the player's value for that club to double/halve
@@ -97,7 +100,6 @@ def incr_date(start_date, days_to_incr, weekdays = [0,1,2,3,4,5,6]):
         for i in nc.itermonthdays(next_year,m):
           if i != 0:
             if calendar.weekday(next_year,m,i) in weekdays:
-              incr_i += 1
               if incr_i == days_to_incr:
                 return calendar_args_to_date(next_year,m,i)
               incr_i += 1
@@ -393,6 +395,9 @@ def attempt_player_transfer(moving_player, from_club, to_club, fee, verbose=Fals
         make_team_sheet(from_club)
     
     return True
+    
+#def offer_wage(offered_player, offering_club, fee, verbose=False):
+#    
 
 #small classes (not derived from entity) go here
 class goal:
@@ -443,7 +448,7 @@ class player_profile:
         return found_players
 
 class player(entity):
-    def __init__(self, name = '', nationality = '', club = '', modifiers = []):
+    def __init__(self, name = '', nationality = '', club = '', wage = 1000, modifiers = []):
         entity.__init__(self)
         self.modifiers = modifiers
         if name and nationality:
@@ -460,6 +465,7 @@ class player(entity):
             self.last_name = np.random.choice(names['nationalities'][nationality][ethnicity]['last_names'])
         self.nationality = nationality
         self.club = club
+        self.wage = 1000
         
         self.goalkeeping = 0
         if 'goalkeeper' in modifiers:
@@ -528,9 +534,10 @@ class team_sheet(entity):
     #            self.attack.append(starting_eleven[starting_position])
     
 class club(entity):
-    def __init__(self, name, load_from_dict = None, modifiers = [], colors = None, elo = 1000, funds = 1e5, verbose=False):
+    def __init__(self, name, country = '', load_from_dict = None, modifiers = [], colors = None, elo = 1000, funds = 1e5, verbose=False):
         entity.__init__(self)
         self.name = name
+        self.country = country
         self.elo = elo
         self.players = []
         self.team_sheets = []
@@ -562,13 +569,21 @@ class club(entity):
                                               club = self.name))
         
         for i in range(len(self.players),starting_player_count_on_roster - default_goalkeepers_per_club):
+            player_nationality = ''
+            if country and ( country in names['nationalities'] ):
+              if np.random.random() < proportion_nationals_per_club:
+                player_nationality = country
             self.players.append(player('',
-                                nationality = '',
+                                nationality = player_nationality,
                                 club = self.name,
                                 modifiers = modifiers))
         for i in range(default_goalkeepers_per_club):
+            player_nationality = ''
+            if country and ( country in names['nationalities'] ):
+              if np.random.random() < proportion_nationals_per_club:
+                player_nationality = country
             self.players.append(player('',
-                                nationality = '',
+                                nationality = player_nationality,
                                 club = self.name,
                                 modifiers = ['goalkeeper']))
             
@@ -584,11 +599,27 @@ class club(entity):
             gk = player_profile(modifiers = [ 'goalkeeper' ])
             player_targets = gk.search(available_leagues)
             
+    def wage_bill(self, verbose=False):
+        wage_sum = 0
+        if verbose:
+            print('  ' + str(self.name) + ' wages:')
+        for club_player in self.players:
+            wage_sum += club_player.wage
+            if verbose:
+                print('    ' + str(club_player.full_name()) + ' wage: ' + str(club_player.wage))
+        return wage_sum
+        
+    def pay_wages(self):
+        self.funds -= self.wage_bill()
+            
     def financial_benchmark(self, date_str):
         self.financial_history[date_str] = self.funds
     
     def __str__(self):
-        return "\033[1m\33[48;5;" + str(self.colors[0]) + "m\33[38;5;" + str(self.colors[1]) + "m" + self.name + "\33[0m"*3
+        if use_8bit_color:
+            return "\033[1m\33[48;5;" + str(self.colors[0]) + "m\33[38;5;" + str(self.colors[1]) + "m" + self.name + "\33[0m"*3
+        else:
+            return self.name
     
     def club_stat(self, exclude_players = None):
         attacks = []
@@ -627,7 +658,7 @@ class season(entity):
         self.matchday = 0 # deprecated
         
         these_clubs = list(clubs)
-        np.random.shuffle(list(clubs))
+        np.random.shuffle(these_clubs)
         # order not yet implemented
         #if not order:
         #    order = np.arange(len(clubs))
@@ -635,6 +666,7 @@ class season(entity):
         
         self.schedule = {}
         matchdays = build_schedule(these_clubs)
+        matchdays += build_schedule(these_clubs[::-1]) # home/away flip
         n_matchdays = len(matchdays)
         this_matchday = 0
         this_date = start_date
@@ -643,6 +675,34 @@ class season(entity):
             this_date = incr_date(this_date, 1, weekdays=[6]) # 6 = Sunday, restrict league matchdays to Sunday
             self.schedule[this_date] = matchdays[this_matchday]
             this_matchday += 1
+    
+class cup_season(entity):
+    def __init__(self, clubs, start_date, order = None):
+        these_clubs = list(clubs)
+        np.random.shuffle(these_clubs)
+        
+        group_size = 0
+        if len(these_clubs) % 5 == 0:
+            group_size = 5
+        elif len(these_clubs) % 4 == 0:
+            group_size = 4
+        else:
+            print('In cup_season: number of clubs not divisible by 4 or 5')
+            return 0
+            
+        n_groups = len(clubs) / group_size
+        cup_groups = []
+        for i in range(n_groups):
+            cup_groups.append([])
+            
+        for cup_club in these_clubs:
+            for cup_group in cup_groups:
+                if len(cup_group) == group_size:
+                    continue
+                cup_group.append(cup_club)
+                break
+        
+        self.groups = cup_groups
     
 class timeline(entity):
     def __init__(self, start_date):
@@ -667,6 +727,7 @@ class league(entity):
         self.standings = [0]*len(clubs)
         self.goal_differentials = [0]*len(clubs)
         self.past_seasons = []
+        self.current_season = None
            
     def find_club(self, name):
         for club in self.clubs:
@@ -741,22 +802,34 @@ class league(entity):
         a.matchday_revenue = int(base_matchday_revenue * a.elo / 1000)
         b.matchday_revenue = int(base_matchday_revenue * b.elo / 1000)
         
-    def setup_season(self, year, verbose = True):
+    def setup_season(self, year, verbose = False):
+        if verbose:
+            print(self.name + ': start of season')
         self.current_season = season(self.clubs, r'8/1/'+str(year))
         
     def end_season(self, verbose = False):
-        print(self.name + ': end of season')
+        if verbose:
+            print(self.name + ': end of season')
         self.past_seasons.append(self.current_season)
+        self.standings = [0]*len(self.clubs)
+        self.goal_differentials = [0]*len(self.clubs)
         
     def date(self, this_date, verbose = False):
-        if calendar.weekday(*date_to_calendar_args(this_date)) == 4: # 4 = Friday
-            for lc in self.clubs:
+        for lc in self.clubs:
+            lc.funds += int(base_additional_sales_multiplier * lc.elo)
+            if calendar.weekday(*date_to_calendar_args(this_date)) == 4: # 4 = Friday
                 lc.financial_benchmark(this_date)
+            elif calendar.weekday(*date_to_calendar_args(this_date)) == 6: # 6 = Sunday
+                lc.pay_wages()
     
-        if this_date in self.current_season.schedule:
+        year, month, day = date_to_calendar_args(this_date)
+    
+        if self.current_season and (this_date in self.current_season.schedule):
             self.matchday(self.current_season.schedule[this_date], verbose = verbose)
             if this_date == list(self.current_season.schedule)[-1]:
-              self.end_season()
+              self.end_season(verbose=verbose)
+        elif month == 8 and day == 1:
+            self.setup_season(year, verbose=verbose)
         elif verbose:
             print(self.name + ': no matches today')
         
@@ -805,3 +878,9 @@ class league(entity):
         standing_pairs = sorted(standing_pairs, key=sort_by_standing)
         for i in standing_pairs[::-1]:
             print('    ' + i[1].name + ': ' + str(i[0]) + ' points, GD = ' + str(i[2]))
+
+class cup(entity):
+    def __init__(self, name, qualification): # qualification: key = league (or cup) instance : value = number of top spots in standing that qualify
+        self.qualification = qualification
+        
+        
